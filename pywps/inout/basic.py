@@ -143,7 +143,11 @@ class IOHandler(object):
             if self._tempfile:
                 return self._tempfile
             else:
-                (opening, stream_file_name) = tempfile.mkstemp(dir=self.workdir)
+                suffix = ''
+                if hasattr(self, 'data_format'):
+                    suffix = self.data_format.extension
+                (opening, stream_file_name) = tempfile.mkstemp(
+                    dir=self.workdir, suffix=suffix)
                 openmode = 'w'
                 if not PY2 and isinstance(self.source, bytes):
                     # on Python 3 open the file in binary mode if the source is
