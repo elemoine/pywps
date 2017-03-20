@@ -20,8 +20,8 @@ from pywps.exceptions import InvalidParameterValue
 import base64
 from collections import namedtuple
 
-_SOURCE_TYPE = namedtuple('SOURCE_TYPE', 'MEMORY, FILE, STREAM, DATA')
-SOURCE_TYPE = _SOURCE_TYPE(0, 1, 2, 3)
+_SOURCE_TYPE = namedtuple('SOURCE_TYPE', 'MEMORY, FILE, STREAM, DATA, BASE64')
+SOURCE_TYPE = _SOURCE_TYPE(0, 1, 2, 3, 4)
 
 
 class IOHandler(object):
@@ -129,8 +129,8 @@ class IOHandler(object):
 
     def set_base64(self, data):
         """Set data encoded in base64"""
-
-        self.data = base64.b64decode(data)
+        self.source_type = SOURCE_TYPE.BASE64
+        self.source = base64.b64decode(data)
         self._check_valid()
 
     def get_file(self):
@@ -138,12 +138,18 @@ class IOHandler(object):
         if self.source_type == SOURCE_TYPE.FILE:
             return self.source
 
-        elif self.source_type == SOURCE_TYPE.STREAM or self.source_type == SOURCE_TYPE.DATA:
+        elif (self.source_type == SOURCE_TYPE.STREAM or
+              self.source_type == SOURCE_TYPE.DATA  or
+              self.source_type == SOURCE_TYPE.BASE64) :
             if self._tempfile:
                 return self._tempfile
             else:
                 (opening, stream_file_name) = tempfile.mkstemp(dir=self.workdir)
-                stream_file = open(stream_file_name, 'w')
+                if self.source_type == SOURCE_TYPE.BASE64:
+                    open_flags = 'wb'
+                else:
+                    open_flags = 'w'
+                stream_file = open(stream_file_name, open_flags)
 
                 if self.source_type == SOURCE_TYPE.STREAM:
                     stream_file.write(self.source.read())

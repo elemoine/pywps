@@ -453,8 +453,7 @@ def get_inputs_from_xml(doc):
                 value_el = complex_data_el[0]
                 inpt['data'] = _get_dataelement_value(value_el)
             else:
-                inpt['data'] = _get_rawvalue_value(
-                    complex_data_el.text, inpt['encoding'])
+                inpt['data'] = complex_data_el.text
             the_inputs[identifier].append(inpt)
             continue
 

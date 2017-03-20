@@ -430,8 +430,10 @@ class Service(object):
 
         def data_handler(complexinput, datain):
             """<wps:Data> ... </wps:Data> handler"""
-
-            complexinput.data = datain.get('data')
+            if datain.get('encoding', '') == 'base64':
+                complexinput.base64 = datain.get('data')
+            else:
+                complexinput.data = datain.get('data')
 
         if href:
             return href_handler
