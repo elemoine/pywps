@@ -121,13 +121,13 @@ class ComplexInput(basic.ComplexInput):
 
     def __init__(self, identifier, title, supported_formats=None,
                  data_format=None, abstract='', metadata=[], min_occurs=1,
-                 max_occurs=1, mode=MODE.NONE):
+                 max_occurs=1, mode=MODE.NONE, suffix=''):
         """constructor"""
 
         basic.ComplexInput.__init__(self, identifier=identifier, title=title,
                                     abstract=abstract,
                                     supported_formats=supported_formats,
-                                    mode=mode)
+                                    mode=mode, suffix=suffix)
         self.metadata = metadata
         self.min_occurs = int(min_occurs)
         self.max_occurs = int(max_occurs)

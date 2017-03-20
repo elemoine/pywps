@@ -77,7 +77,7 @@ class IOHandler(object):
     >>> # skipped assert isinstance(ioh_mo.memory_object, POSH)
     """
 
-    def __init__(self, workdir=None, mode=MODE.NONE):
+    def __init__(self, workdir=None, mode=MODE.NONE, suffix=''):
         self.source_type = None
         self.source = None
         self._tempfile = None
@@ -85,6 +85,7 @@ class IOHandler(object):
         self._stream = None
 
         self.valid_mode = mode
+        self.suffix = suffix
 
     def _check_valid(self):
         """Validate this input usig given validator
@@ -144,7 +145,8 @@ class IOHandler(object):
             if self._tempfile:
                 return self._tempfile
             else:
-                (opening, stream_file_name) = tempfile.mkstemp(dir=self.workdir)
+                (opening, stream_file_name) = tempfile.mkstemp(
+                    dir=self.workdir, suffix=self.suffix)
                 if self.source_type == SOURCE_TYPE.BASE64:
                     open_flags = 'wb'
                 else:
@@ -537,9 +539,9 @@ class ComplexInput(BasicIO, BasicComplex, IOHandler):
 
     def __init__(self, identifier, title=None, abstract=None,
                  workdir=None, data_format=None, supported_formats=None,
-                 mode=MODE.NONE):
+                 mode=MODE.NONE, suffix=''):
         BasicIO.__init__(self, identifier, title, abstract)
-        IOHandler.__init__(self, workdir=workdir, mode=mode)
+        IOHandler.__init__(self, workdir=workdir, mode=mode, suffix=suffix)
         BasicComplex.__init__(self, data_format, supported_formats)
 
     @property
