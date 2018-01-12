@@ -78,23 +78,29 @@ class Service(object):
         """
         self._set_grass()
         response = None
-        try:
-            process = self.processes[identifier]
 
-            # make deep copy of the process instace
-            # so that processes are not overriding each other
-            # just for execute
-            process = copy.deepcopy(process)
-
-            workdir = os.path.abspath(config.get_config_value('server', 'workdir'))
-            tempdir = tempfile.mkdtemp(prefix='pywps_process_', dir=workdir)
-            process.set_workdir(tempdir)
-        except KeyError:
-            raise InvalidParameterValue("Unknown process '%r'" % identifier, 'Identifier')
+        process = self.prepare_process_for_execution(identifier)
 
         response = self._parse_and_execute(process, wps_request, uuid)
 
         return response
+
+    def prepare_process_for_execution(self, identifier):
+        """Prepare the process identified by ``identifier`` for execution.
+        """
+        try:
+            process = self.processes[identifier]
+        except KeyError:
+            raise InvalidParameterValue("Unknown process '%r'" % identifier, 'Identifier')
+        # make deep copy of the process instace
+        # so that processes are not overriding each other
+        # just for execute
+        process = copy.deepcopy(process)
+        process.service = self
+        workdir = os.path.abspath(config.get_config_value('server', 'workdir'))
+        tempdir = tempfile.mkdtemp(prefix='pywps_process_', dir=workdir)
+        process.set_workdir(tempdir)
+        return process
 
     def _parse_and_execute(self, process, wps_request, uuid):
         """Parse and execute request
