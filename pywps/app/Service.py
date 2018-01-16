@@ -92,12 +92,7 @@ class Service(object):
         except KeyError:
             raise InvalidParameterValue("Unknown process '%r'" % identifier, 'Identifier')
 
-        olddir = os.path.abspath(os.curdir)
-        try:
-            os.chdir(process.workdir)
-            response = self._parse_and_execute(process, wps_request, uuid)
-        finally:
-            os.chdir(olddir)
+        response = self._parse_and_execute(process, wps_request, uuid)
 
         return response
 
