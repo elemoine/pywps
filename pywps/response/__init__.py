@@ -16,17 +16,15 @@ def get_response(operation):
 
 class WPSResponse(object):
 
-    def __init__(self, wps_request, uuid=None):
+    def __init__(self, wps_request, uuid=None, message=None):
 
         self.wps_request = wps_request
         self.uuid = uuid
-        self.message = ''
+        self.message = message
         self.status = STATUS.NO_STATUS
         self.status_percentage = 0
         self.doc = None
-
-        self.update_status(message="Request accepted", status_percentage=0,
-                status=self.status)
+        self.update_status()
 
     def update_status(self, message=None, status_percentage=None, status=None,
                       clean=True):
